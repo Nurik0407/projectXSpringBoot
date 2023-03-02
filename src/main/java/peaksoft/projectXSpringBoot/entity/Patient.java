@@ -40,7 +40,7 @@ public class Patient {
     private Gender gender;
     @NotEmpty(message = "Email must by not empty!")
     @Email(message = "Incorrect email!")
-    @Column(name = "Email",unique = true)
+    @Column(unique = true)
     private String email;
     @ManyToOne(cascade = {PERSIST, MERGE, DETACH, REFRESH})
     private Hospital hospital;

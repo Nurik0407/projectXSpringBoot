@@ -25,6 +25,7 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "appointment_id_gen")
     @SequenceGenerator(name = "appointment_id_gen", allocationSize = 1)
     private Long id;
+    @Column(name = "local_date")
     private LocalDate localDate;
     @ManyToOne(cascade = {MERGE, PERSIST, DETACH, REFRESH})
     private Patient patient;

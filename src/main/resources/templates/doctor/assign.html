@@ -38,9 +38,19 @@
             margin-bottom: 10px;
             font-weight: bold;
         }
+        .back {
+            position: absolute;
+            top: 30px;
+            left: 90%;
+            transform: translate(-50%, -50%);
+        }
     </style>
 </head>
 <body>
+
+<div class="back">
+    <a th:href="@{/appointment/{hospitalId}(hospitalId=${hospitalId})}" class="btn btn-outline-danger">back</a>
+</div>
 
 <div class="form-container">
     <form th:action="@{/doctor/{hospitalId}/{doctorId}/assigned(hospitalId=${hospitalId},doctorId=${doctor.getId()})}"

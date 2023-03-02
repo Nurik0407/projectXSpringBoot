@@ -65,23 +65,23 @@ public class AppointmentServiceImpl implements AppointmentService {
             appointment.setLocalDate(date);
             appointment.setPatient(patientRepository.findById(appointment.getPatientId()).get());
             appointment.setDoctor(doctorRepository.findById(appointment.getDoctorId()).get());
-
             List<Department> departments = doctorRepository.findById(appointment.getDoctorId()).get().getDepartments();
+
             boolean isTrue = false;
-            for (Department department : departments) {
-                if (department.getId().equals(appointment.getDepartmentId())) {
-                    isTrue = true;
-                    break;
+            if (!departments.isEmpty()) {
+                for (Department department : departments) {
+                    if (department.getId().equals(appointment.getDepartmentId())) {
+                        isTrue = true;
+                        break;
+                    }
                 }
             }
-            if (isTrue) {
-                appointment.setDepartment(departmentRepository.findById(appointment.getDepartmentId()).get());
-                hospital.addAppointment(appointment);
-                appointmentRepository.save(appointment);
-            } else {
+            if (!isTrue) {
                 throw new RuntimeException();
             }
-
+            appointment.setDepartment(departmentRepository.findById(appointment.getDepartmentId()).get());
+            hospital.addAppointment(appointment);
+            appointmentRepository.save(appointment);
         } catch (DateTimeException d) {
             throw new DateTimeException();
         } catch (RuntimeException e) {

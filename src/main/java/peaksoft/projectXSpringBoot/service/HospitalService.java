@@ -1,7 +1,5 @@
 package peaksoft.projectXSpringBoot.service;
 
-
-
 import peaksoft.projectXSpringBoot.entity.Hospital;
 
 import java.util.List;

@@ -61,7 +61,7 @@ public class AppointmentApi {
             model.addAttribute("doctors", doctorService.getAllByHospitalId(hospitalId));
             model.addAttribute("departments", departmentService.getAllByHospitalId(hospitalId));
             model.addAttribute("hospId", hospitalId);
-            model.addAttribute("departmentError", "This doctor does not work in this department!");
+            model.addAttribute("departmentError", "This department does not belong to this doctor, choose another!");
             return "appointment/new";
         }
         return "redirect:/appointment/" + hospitalId;

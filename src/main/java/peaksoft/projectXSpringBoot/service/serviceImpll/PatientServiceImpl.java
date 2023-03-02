@@ -2,6 +2,7 @@ package peaksoft.projectXSpringBoot.service.serviceImpll;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import peaksoft.projectXSpringBoot.entity.Appointment;
 import peaksoft.projectXSpringBoot.entity.Hospital;
@@ -42,14 +43,21 @@ public class PatientServiceImpl implements PatientService {
         try {
             patient.setHospital(hospitalRepository.findById(hospitalId).get());
             List<Patient> patients = patientRepository.findAll();
-            if (patients != null) {
-                for (Patient pat : patients) {
-                    if (pat.getPhoneNumber().equals(patient.getPhoneNumber())) {
-                        throw new RuntimeException();
-                    }
+
+            for (Patient patient1 : patients) {
+                if (patient1.getEmail().equals(patient.getEmail())) {
+                    throw new DataIntegrityViolationException("!");
+                }
+            }
+
+            for (Patient pat : patients) {
+                if (pat.getPhoneNumber().equals(patient.getPhoneNumber())) {
+                    throw new RuntimeException();
                 }
             }
             patientRepository.save(patient);
+        }catch (DataIntegrityViolationException e){
+            throw  new DataIntegrityViolationException("!");
         } catch (Exception e) {
             throw new RuntimeException();
         }
@@ -59,8 +67,15 @@ public class PatientServiceImpl implements PatientService {
     public void update(Long id, Patient newPatient) {
         try {
             Patient patient = patientRepository.findById(id).get();
+            List<Patient> patients = patientRepository.findAll();
 
-            for (Patient pat : patientRepository.findAll()) {
+            for (Patient patient1 : patients) {
+                if (patient1.getEmail().equals(newPatient.getEmail()) && !patient1.getId().equals(id)) {
+                    throw new DataIntegrityViolationException("!");
+                }
+            }
+
+            for (Patient pat : patients) {
                 if (pat.getPhoneNumber().equals(newPatient.getPhoneNumber()) && !pat.getId().equals(id)) {
                     throw new RuntimeException();
                 }
@@ -70,6 +85,8 @@ public class PatientServiceImpl implements PatientService {
             patient.setEmail(newPatient.getEmail());
             patient.setGender(newPatient.getGender());
             patient.setPhoneNumber(newPatient.getPhoneNumber());
+        }catch (DataIntegrityViolationException e){
+            throw  new DataIntegrityViolationException("!");
         } catch (Exception e) {
             throw new RuntimeException();
         }
