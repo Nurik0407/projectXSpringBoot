@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.projectXSpringBoot.entity.Appointment;
+import peaksoft.projectXSpringBoot.exceptions.DateTimeException;
 import peaksoft.projectXSpringBoot.service.*;
 
 
@@ -44,8 +45,25 @@ public class AppointmentApi {
     }
 
     @PostMapping("/{hospitalId}/save")
-    public String save(@PathVariable Long hospitalId, @ModelAttribute("appointment") Appointment appointment) {
-        appointmentService.save(appointment, hospitalId);
+    public String save(@PathVariable Long hospitalId, @ModelAttribute("appointment") Appointment appointment
+            , Model model) {
+        try {
+            appointmentService.save(appointment, hospitalId);
+        } catch (DateTimeException d) {
+            model.addAttribute("patients", patientService.getAll(hospitalId));
+            model.addAttribute("doctors", doctorService.getAllByHospitalId(hospitalId));
+            model.addAttribute("departments", departmentService.getAllByHospitalId(hospitalId));
+            model.addAttribute("hospId", hospitalId);
+            model.addAttribute("dateError", "Date cannot be past!");
+            return "appointment/new";
+        } catch (RuntimeException e) {
+            model.addAttribute("patients", patientService.getAll(hospitalId));
+            model.addAttribute("doctors", doctorService.getAllByHospitalId(hospitalId));
+            model.addAttribute("departments", departmentService.getAllByHospitalId(hospitalId));
+            model.addAttribute("hospId", hospitalId);
+            model.addAttribute("departmentError", "This doctor does not work in this department!");
+            return "appointment/new";
+        }
         return "redirect:/appointment/" + hospitalId;
     }
 
@@ -61,14 +79,30 @@ public class AppointmentApi {
 
     @PostMapping("/{hospitalId}/{id}/update")
     public String update(@PathVariable Long hospitalId, @PathVariable Long id
-            , @ModelAttribute Appointment appointment) {
-        appointmentService.update(id, appointment);
-        return "redirect:/appointment/" + hospitalId;
+            , @ModelAttribute Appointment appointment, Model model) {
+        try {
+            appointmentService.update(id, appointment);
+            return "redirect:/appointment/" + hospitalId;
+        } catch (DateTimeException d) {
+            model.addAttribute("patients", patientService.getAll(hospitalId));
+            model.addAttribute("doctors", doctorService.getAllByHospitalId(hospitalId));
+            model.addAttribute("departments", departmentService.getAllByHospitalId(hospitalId));
+            model.addAttribute("hospId", hospitalId);
+            model.addAttribute("dateError", "Date cannot be past!");
+            return "appointment/edit";
+        } catch (RuntimeException e) {
+            model.addAttribute("patients", patientService.getAll(hospitalId));
+            model.addAttribute("doctors", doctorService.getAllByHospitalId(hospitalId));
+            model.addAttribute("departments", departmentService.getAllByHospitalId(hospitalId));
+            model.addAttribute("hospId", hospitalId);
+            model.addAttribute("departmentError", "This department does not belong to this doctor, choose another!");
+            return "appointment/edit";
+        }
     }
 
     @GetMapping("/{hospitalId}/{id}/delete")
     public String delete(@PathVariable Long hospitalId, @PathVariable Long id) {
-        appointmentService.delete(id,hospitalId);
+        appointmentService.delete(id, hospitalId);
         return "redirect:/appointment/" + hospitalId;
     }
 }

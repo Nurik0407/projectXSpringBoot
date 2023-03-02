@@ -124,7 +124,8 @@
                 margin-left: 9rem;
             }
         }
-        .form-container{
+
+        .form-container {
             margin-top: 13%;
         }
     </style>
@@ -145,6 +146,9 @@
             <input type="date" th:field="*{date}" id="birthday" name="birthday"
                    min="2023-02-20" max="2025-12-31" required>
         </div>
+        <div th:if="${dateError}" class="alert alert-danger" role="alert">
+            <span style="color:red;" th:text="${dateError}"></span>
+        </div>
 
         <div class="form-box">
             <label for="domain">Patient</label>
@@ -159,20 +163,25 @@
             <label for="doctor">Doctor</label>
             <select th:field="*{doctorId}" id="doctor" name="domain" required>
                 <option th:each="doc : ${doctors}" th:value="${doc.getId()}"
-                        th:text="${doc.getLastName()+' '+doc.getFirstName()}">Odctor
+                        th:text="${doc.getLastName()+' '+doc.getFirstName()}">Doctor
                 </option>
             </select>
         </div>
-
-        <div class="form-box">
-            <label for="dep">Department</label>
-            <select th:field="*{departmentId}" id="dep" name="domain" required>
-                <option th:each="dep : ${departments}" th:value="${dep.getId()}" th:text="${dep.getName()}">dep</option>
-            </select>
+        <div>
+            <div class="form-box">
+                <label for="dep">Department</label>
+                <select th:field="*{departmentId}" id="dep" name="domain" required>
+                    <option th:each="dep : ${departments}" th:value="${dep.getId()}" th:text="${dep.getName()}">dep
+                    </option>
+                </select>
+            </div>
+            <div th:if="${departmentError}" class="alert alert-danger" role="alert">
+                <span style="color:red;" th:text="${departmentError}"></span>
+            </div>
         </div>
 
         <div class="form-box">
-            <button class="btn btn-primary-dan"  id="btnSend">Send</button>
+            <button class="btn btn-primary-dan" id="btnSend">Send</button>
         </div>
 
     </form>
@@ -182,7 +191,6 @@
 <!--<div class="form-container">-->
 <!--    <form th:action="@{/appointment/{hospitalId}/save(hospitalId=${hospId})}"-->
 <!--          th:method="POST" th:object="${appointment}">-->
-
 
 
 <!--        <label for="patient">Select patient :</label>-->

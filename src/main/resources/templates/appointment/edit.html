@@ -145,6 +145,9 @@
             <input type="date" th:field="*{date}" id="birthday" name="birthday"
                    min="2023-02-20" max="2025-12-31" required>
         </div>
+        <div th:if="${dateError}" class="alert alert-danger" role="alert">
+            <span style="color:red;" th:text="${dateError}"></span>
+        </div>
 
         <div class="form-box">
             <label for="domain">Patient</label>
@@ -169,6 +172,9 @@
             <select th:field="*{departmentId}" id="dep" name="domain" required>
                 <option th:each="dep : ${departments}" th:value="${dep.getId()}" th:text="${dep.getName()}">dep</option>
             </select>
+        </div>
+        <div th:if="${departmentError}" class="alert alert-danger" role="alert">
+            <span style="color:red;" th:text="${departmentError}"></span>
         </div>
 
         <div class="form-box">

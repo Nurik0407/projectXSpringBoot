@@ -13,6 +13,7 @@ import peaksoft.projectXSpringBoot.repository.HospitalRepository;
 
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Zholdoshov Nuradil
@@ -57,7 +58,6 @@ public class DoctorServiceImpl implements DoctorService {
     public void save(Doctor doctor, Long id) {
         try {
             doctor.setHospital(hospitalRepository.findById(id).get());
-            doctor.getDepartmentIdes().forEach(s -> doctor.addDepartment(departmentRepository.findById(s).get()));
             doctorRepository.save(doctor);
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -73,8 +73,6 @@ public class DoctorServiceImpl implements DoctorService {
             oldDoctor.setImage(doctor.getImage());
             oldDoctor.setEmail(doctor.getEmail());
             oldDoctor.setPosition(doctor.getPosition());
-            oldDoctor.setDepartments(null);
-            doctor.getDepartmentIdes().forEach(s -> oldDoctor.addDepartment(departmentRepository.findById(s).get()));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -89,7 +87,7 @@ public class DoctorServiceImpl implements DoctorService {
         if (appointments != null) {
             List<Appointment> appointmentList = appointments.stream().filter(a -> a.getDoctor().getId().equals(id)).toList();
             appointmentList.forEach(appointments::remove);
-            appointmentList.forEach(s->appointmentRepository.deleteById(s.getId()));
+            appointmentList.forEach(s -> appointmentRepository.deleteById(s.getId()));
         }
 
         List<Doctor> doctors = doctor.getHospital().getDoctorList();
@@ -101,5 +99,14 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public List<Doctor> getAllByDepartmentId(Long departmentId) {
         return doctorRepository.getAllByDepartmentId(departmentId);
+    }
+
+    @Override
+    public void assign(Long doctorId, List<Long> departmentIdes) {
+        Doctor doctor = doctorRepository.findById(doctorId).
+                orElseThrow(() -> new NoSuchElementException("Not found!!!"));
+        departmentIdes.
+                forEach(s -> doctor.addDepartment(departmentRepository.findById(s).
+                        orElseThrow(() -> new NoSuchElementException("Not found!"))));
     }
 }

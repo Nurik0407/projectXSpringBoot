@@ -9,11 +9,14 @@ import peaksoft.projectXSpringBoot.entity.Doctor;
 import peaksoft.projectXSpringBoot.entity.Hospital;
 import peaksoft.projectXSpringBoot.repository.AppointmentRepository;
 import peaksoft.projectXSpringBoot.repository.DepartmentRepository;
+import peaksoft.projectXSpringBoot.repository.DoctorRepository;
 import peaksoft.projectXSpringBoot.repository.HospitalRepository;
 import peaksoft.projectXSpringBoot.service.DepartmentService;
 
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Zholdoshov Nuradil
@@ -31,7 +34,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     private final HospitalRepository hospitalRepository;
     private final AppointmentRepository appointmentRepository;
 
-
+    private final DoctorRepository doctorRepository;
 
     @Override
     public Department findById(Long id) {
@@ -66,7 +69,7 @@ public class DepartmentServiceImpl implements DepartmentService {
                     throw new RuntimeException();
                 }
             }
-           Department department = departmentRepository.findById(id).get();
+            Department department = departmentRepository.findById(id).get();
             department.setName(newDepartment.getName());
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -84,7 +87,7 @@ public class DepartmentServiceImpl implements DepartmentService {
             if (appointments != null) {
                 List<Appointment> appointmentList = appointments.stream().filter(s -> s.getDepartment().getId().equals(id)).toList();
                 appointmentList.forEach(appointments::remove);
-                appointmentList.forEach(s->appointmentRepository.deleteById(s.getId()));
+                appointmentList.forEach(s -> appointmentRepository.deleteById(s.getId()));
             }
         }
 
@@ -93,7 +96,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         List<Doctor> doctors = department.getDoctors();
         if (doctors != null) {
-            doctors.forEach(d->d.getDepartments().removeIf(s->s.getId().equals(id)));
+            doctors.forEach(d -> d.getDepartments().removeIf(s -> s.getId().equals(id)));
         }
 
         departmentRepository.deleteById(id);
@@ -109,8 +112,18 @@ public class DepartmentServiceImpl implements DepartmentService {
         throw new RuntimeException();
     }
 
+    @Override
+    public List<Department> getDepartmentsByHospitalIdAndDoctorId(Long hospitalId, Long doctorId) {
+        List<Department> departments = departmentRepository.getAllByHospitalId(hospitalId);
+        Doctor doctor = doctorRepository.findById(doctorId).orElseThrow(() -> new NoSuchElementException("Not found!!!"));
+        List<Department> list = doctor.getDepartments();
 
+        if (!list.isEmpty()) {
+            departments.removeAll(list);
+        }
+        return departments;
 
+    }
 
 
 }

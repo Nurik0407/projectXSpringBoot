@@ -71,6 +71,9 @@
         <div style="color: red" th:if="${#fields.hasErrors('name')}">
             <span th:errors="*{name}"></span>
         </div>
+        <div th:if="${nameError}" class="alert alert-danger" role="alert">
+            <span style="color:red;" th:text="${nameError}"></span>
+        </div>
 
         <label for="address">Address:</label>
         <input type="text" id="address" th:field="*{address}" name="address" >

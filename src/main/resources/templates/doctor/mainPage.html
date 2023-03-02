@@ -79,6 +79,9 @@
                 <input type="submit" class="btn btn-primary" value="Delete">
             </form>
 
+            <a th:href="@{/doctor/{hospitalId}/{doctorId}/assign(hospitalId=${hospitalId},doctorId=${doctor.getId()})}"
+               class="btn btn-primary">Assign</a>
+
         </div>
     </div>
 </div>

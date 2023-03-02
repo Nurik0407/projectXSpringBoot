@@ -23,4 +23,7 @@ public interface DoctorService {
     void delete(Long id);
 
     List<Doctor> getAllByDepartmentId(Long departmentId);
+
+    void assign(Long doctorId, List<Long> departmentIdes);
+
 }

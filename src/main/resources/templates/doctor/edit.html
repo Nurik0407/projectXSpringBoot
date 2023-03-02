@@ -98,19 +98,19 @@
             <span th:errors="*{image}"></span>
         </div>
 
-        <div class="form-group">
-            <label for="departmentIdes">Select department:</label>
-            <select id="departmentIdes"  name="departmentIdes" class="form-control" multiple required
-                    th:field="*{departmentIdes}">
-                <option th:each="department : ${departments}"
-                        th:value="${department.getId()}"
-                        th:text="${department.getName()}">
-                </option>
-            </select>
-            <div style="color: red" th:if="${#fields.hasErrors('departmentIdes')}">
-                <span th:errors="*{departmentIdes}"></span>
-            </div>
-        </div>
+<!--        <div class="form-group">-->
+<!--            <label for="departmentIdes">Select department:</label>-->
+<!--            <select id="departmentIdes"  name="departmentIdes" class="form-control" multiple required-->
+<!--                    th:field="*{departmentIdes}">-->
+<!--                <option th:each="department : ${departments}"-->
+<!--                        th:value="${department.getId()}"-->
+<!--                        th:text="${department.getName()}">-->
+<!--                </option>-->
+<!--            </select>-->
+<!--            <div style="color: red" th:if="${#fields.hasErrors('departmentIdes')}">-->
+<!--                <span th:errors="*{departmentIdes}"></span>-->
+<!--            </div>-->
+<!--        </div>-->
         <br>
         <div>
             <button type="submit">Update</button>

@@ -12,6 +12,8 @@ import peaksoft.projectXSpringBoot.service.DepartmentService;
 import peaksoft.projectXSpringBoot.service.DoctorService;
 import peaksoft.projectXSpringBoot.service.HospitalService;
 
+import java.util.List;
+
 /**
  * Zholdoshov Nuradil
  * peaksoft.api
@@ -29,7 +31,6 @@ public class DoctorApi {
     private final DepartmentService departmentService;
 
 
-
     @GetMapping("/{hospitalId}")
     public String getAll(Model model, @PathVariable("hospitalId") Long hospitalId) {
         model.addAttribute("doctors", doctorService.getAllByHospitalId(hospitalId));
@@ -42,7 +43,6 @@ public class DoctorApi {
     public String newDoctor(@PathVariable Long hospitalId, Model model) {
         model.addAttribute("doctor", new Doctor());
         model.addAttribute("hospitalId", hospitalId);
-        model.addAttribute("departments", departmentService.getAllByHospitalId(hospitalId));
         return "doctor/new";
     }
 
@@ -50,7 +50,7 @@ public class DoctorApi {
     public String save(@PathVariable Long hospitalId, @ModelAttribute("doctor") @Valid Doctor doctor,
                        BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("departments", departmentService.getAllByHospitalId(hospitalId));
+            model.addAttribute("hospitalId", hospitalId);
             return "doctor/new";
         }
         try {
@@ -58,7 +58,6 @@ public class DoctorApi {
             return "redirect:/doctor/" + hospitalId;
         } catch (DataIntegrityViolationException e) {
             model.addAttribute("hospitalId", hospitalId);
-            model.addAttribute("departments", departmentService.getAllByHospitalId(hospitalId));
             model.addAttribute("Email", "This email already exists in the database");
             return "doctor/new";
         }
@@ -91,10 +90,23 @@ public class DoctorApi {
             doctorService.update(id, doctor);
             return "redirect:/doctor/" + hospitalId;
         } catch (DataIntegrityViolationException e) {
-            model.addAttribute("departments",departmentService.getAllByHospitalId(hospitalId));
+            model.addAttribute("departments", departmentService.getAllByHospitalId(hospitalId));
             model.addAttribute("Email", "This email already exists in the database");
             return "doctor/edit";
         }
+    }
 
+    @GetMapping("/{hospitalId}/{doctorId}/assign")
+    public String assign(@PathVariable Long hospitalId, @PathVariable Long doctorId, Model model) {
+        model.addAttribute(hospitalId);
+        model.addAttribute("doctor",doctorService.findById(doctorId));
+        model.addAttribute("departments", departmentService.getDepartmentsByHospitalIdAndDoctorId(hospitalId,doctorId));
+        return "doctor/assign";
+    }
+
+    @PostMapping("/{hospitalId}/{doctorId}/assigned")
+    public String assigned(@PathVariable Long hospitalId,@PathVariable Long doctorId,@RequestParam("departmentIdes") List<Long> departmentIdes) {
+        doctorService.assign(doctorId,departmentIdes);
+        return "redirect:/doctor/" + hospitalId;
     }
 }

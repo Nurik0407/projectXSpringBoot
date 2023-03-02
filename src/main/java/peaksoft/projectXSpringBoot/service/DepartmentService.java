@@ -24,5 +24,6 @@ public interface DepartmentService {
     List<Department> getAllByHospitalId(Long id);
 
 
+    List<Department> getDepartmentsByHospitalIdAndDoctorId(Long hospitalId, Long doctorId);
 
 }

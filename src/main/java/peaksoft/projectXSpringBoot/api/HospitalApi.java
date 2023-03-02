@@ -20,7 +20,6 @@ public class HospitalApi {
 
     private final HospitalService hospitalService;
 
-
     @GetMapping
     public String getAll(Model model,@RequestParam(value = "keyWord",required = false) String keyWord) {
         model.addAttribute("hospitals", hospitalService.getAllHospital(keyWord));
@@ -36,12 +35,17 @@ public class HospitalApi {
 
     @PostMapping("/save")
     public String saveHospital(@ModelAttribute("hospital") @Valid Hospital hospital,
-                               BindingResult bindingResult) {
+                               BindingResult bindingResult,Model model) {
         if (bindingResult.hasErrors()) {
             return "hospital/new";
         }
-        hospitalService.saveHospital(hospital);
-        return "redirect:/hospital";
+        try {
+            hospitalService.saveHospital(hospital);
+            return "redirect:/hospital";
+        }catch (RuntimeException e){
+            model.addAttribute("nameError","Hospital name already exist!");
+            return "hospital/new";
+        }
     }
 
     @GetMapping("/{id}/byId")
